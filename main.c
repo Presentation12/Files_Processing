@@ -35,7 +35,7 @@ int mostrar(char* ficheiro){
 /**
  * @brief Função que copia o conteúdo de um ficheiro para um novo ficheiro
  * 
- * TODO: Com bug a ler o ficheiro, "come" o ultimo caracter
+ * TODO: Função Concluida
  * 
  * @param ficheiro -> ficheiro alvo
  * @return int 
@@ -70,7 +70,7 @@ int copiar(char* ficheiro){
 /**
  * @brief Função que concatena o ficheiro 1 no ficheiro 2
  * 
- * TODO: por concatenar, ja consegue ler e escrever
+ * TODO: Função Concluida
  * 
  * @param ficheiro1 -> Ficheiro origem
  * @param ficheiro2 -> Ficheiro destino (concatenado)
@@ -88,9 +88,16 @@ int concatenar(char* ficheiro1, char* ficheiro2){
 
     leitura = read(fd, content, sizeof(content));
 
-    int fd2 = open(ficheiro2, O_APPEND);
+    printf("%s --> %d", content, leitura);
 
-    write(fd2, content, leitura);
+    int fd2 = open(ficheiro2, O_WRONLY|O_APPEND);
+
+    if (fd2 == -1){
+        perror("Erro ao abrir");
+        return -1;
+    }
+
+    int test = write(fd2, content, leitura);
 
     close(fd2);
     close(fd);
