@@ -2,6 +2,10 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <dirent.h>
 #include "functions.h"
 
 
@@ -15,13 +19,14 @@
  */
 int mostrar(char* ficheiro){
     int fd = open (ficheiro, O_RDONLY), leitura;
-    char* content = malloc(sizeof(1500));
+    char content[1500];
 
     if (fd == -1) 
     {
         perror("Erro ao abrir");
         return -1;
     }
+
 
     leitura = read(fd, content, sizeof(content));
     
@@ -36,7 +41,7 @@ int mostrar(char* ficheiro){
 /**
  * @brief Função que copia o conteúdo de um ficheiro para um novo ficheiro
  * 
- * TODO: Função Concluida
+ * TODO: Por alterar Permissoes
  * 
  * @param ficheiro -> ficheiro alvo
  * @return int 
@@ -58,6 +63,7 @@ int copiar(char* ficheiro){
 
     leitura = read(fd, content, sizeof(content));
     
+    //Alterar permissoes
     int fd2 = creat(ficheiro_copia, O_RDONLY|S_IRUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);
 
     write(fd2, content, leitura);
@@ -88,8 +94,6 @@ int concatenar(char* ficheiro1, char* ficheiro2){
     }
 
     leitura = read(fd, content, sizeof(content));
-
-    printf("%s --> %d", content, leitura);
 
     int fd2 = open(ficheiro2, O_WRONLY|O_APPEND);
 
@@ -170,12 +174,27 @@ int informar(char* ficheiro){
 /**
  * @brief Função com funcionalidade de apresentar uma lista de todas as pastas e ficheiros existentes na diretoria inserida
  * 
- * TODO: Por começar...
+ * TODO: Por distinguir pastas de ficheiros
  * 
  * @param diretoria Diretoria alvo 
  * @return int 
  */
 int lista(char* diretoria){
+    DIR* directory = opendir(diretoria);
+    struct dirent *dir;
 
+    if(directory == NULL){
+        if(errno == ENOENT) write(1, "Diretorio nao existe, poh caralho", 33);
+        else write(1, "Nao consegue abrir o diretorio", 40);
+        printf("\n");
+    }
+    
+    if (directory) {
+    while ((dir = readdir(directory)) != NULL) {
+      printf("%s\n", dir->d_name);
+    }
+
+    closedir(directory);
+  }
     return 1;
 }
