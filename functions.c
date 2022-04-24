@@ -8,7 +8,6 @@
 #include <dirent.h>
 #include "functions.h"
 
-
 /**
  * @brief Função que escreve no stdout o conteúdo de um ficheiro
  * 
@@ -174,7 +173,7 @@ int informar(char* ficheiro){
 /**
  * @brief Função com funcionalidade de apresentar uma lista de todas as pastas e ficheiros existentes na diretoria inserida
  * 
- * TODO: Por distinguir pastas de ficheiros
+ * TODO: Função concluida
  * 
  * @param diretoria Diretoria alvo 
  * @return int 
@@ -190,11 +189,21 @@ int lista(char* diretoria){
     }
     
     if (directory) {
-    while ((dir = readdir(directory)) != NULL) {
-      printf("%s\n", dir->d_name);
+        while ((dir = readdir(directory)) != NULL) {
+            if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0){
+                if(dir->d_type == DT_REG) printf("%s (file)\n", dir->d_name); 
+                else if(dir->d_type == DT_DIR) printf("%s (directory)\n", dir->d_name, dir->d_type); 
+                else if(dir->d_type == DT_BLK) printf("%s (block device)\n", dir->d_name, dir->d_type); 
+                else if(dir->d_type == DT_CHR) printf("%s (character device)\n", dir->d_name, dir->d_type); 
+                else if(dir->d_type == DT_LNK) printf("%s (symbolic link)\n", dir->d_name, dir->d_type); 
+                else if(dir->d_type == DT_SOCK) printf("%s (local-domain socket)\n", dir->d_name, dir->d_type); 
+                else if(dir->d_type == DT_FIFO) printf("%s (fifo)\n", dir->d_name, dir->d_type); 
+                else if(dir->d_type == DT_UNKNOWN) printf("%s (unknown)\n", dir->d_name, dir->d_type);   
+            } 
+        }
     }
 
     closedir(directory);
-  }
+
     return 1;
 }
