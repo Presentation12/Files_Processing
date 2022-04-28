@@ -1,2 +1,2 @@
 compile:
-	gcc main.c functions.c functions.h -o execute	
+	gcc main.c functions.c functions.h -o e

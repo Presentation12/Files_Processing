@@ -41,7 +41,7 @@ int mostrar(char* ficheiro){
 /**
  * @brief Função que copia o conteúdo de um ficheiro para um novo ficheiro
  * 
- * TODO: Por alterar Permissoes
+ * TODO: Por alterar Permissoes, ficheiro2 tem igual a ficheiro_copia
  * 
  * @param ficheiro -> ficheiro alvo
  * @return int 
@@ -167,20 +167,27 @@ int apagar(char* ficheiro){
  * @return int 
  */
 int informar(char* ficheiro){
-if(argc != 2)    
-        return 1;
  
+    int fd = open (ficheiro, O_RDONLY);
+    char content[1500];
+
+    if (fd == -1) 
+    {
+        perror("Erro ao abrir");
+        return -1;
+    }
+
     struct stat fileStat;
-    if(stat(argv[1],&fileStat) < 0)    
+    if(stat(ficheiro,&fileStat) < 0)    
         return 1;
  
-    printf("Information for %s\n",argv[1]);
+    printf("Information for %s\n",ficheiro);
     printf("---------------------------\n");
-    printf("File Size: \t\t%d bytes\n",fileStat.st_size);
-    printf("Number of Links: \t%d\n",fileStat.st_nlink);
-    printf("File inode: \t\t%d\n",fileStat.st_ino);
- 
-    printf("File Permissions: \t");
+    printf("File Size: %d\t",fileStat.st_size);
+    printf("Blocks: %d\t", fileStat.st_blocks);
+    printf("File inode: %d\t",fileStat.st_ino);
+    printf("Links: %d\n",fileStat.st_nlink);
+    printf("Acess: (");
     printf( (S_ISDIR(fileStat.st_mode)) ? "d" : "-");
     printf( (fileStat.st_mode & S_IRUSR) ? "r" : "-");
     printf( (fileStat.st_mode & S_IWUSR) ? "w" : "-");
@@ -191,6 +198,7 @@ if(argc != 2)
     printf( (fileStat.st_mode & S_IROTH) ? "r" : "-");
     printf( (fileStat.st_mode & S_IWOTH) ? "w" : "-");
     printf( (fileStat.st_mode & S_IXOTH) ? "x" : "-");
+    printf(")");
     printf("\n\n");
  
     printf("The file %s a symbolic link\n", (S_ISLNK(fileStat.st_mode)) ? "is" : "is not");
@@ -201,7 +209,7 @@ if(argc != 2)
 /**
  * @brief Função com funcionalidade de apresentar uma lista de todas as pastas e ficheiros existentes na diretoria inserida
  * 
- * TODO: Função concluida
+ * TODO: Melhorar mensagens de erro
  * 
  * @param diretoria Diretoria alvo 
  * @return int 
@@ -211,7 +219,7 @@ int lista(char* diretoria){
     struct dirent *dir;
 
     if(directory == NULL){
-        if(errno == ENOENT) write(1, "Diretorio nao existe, poh caralho", 33);
+        if(errno == ENOENT) write(1, "Diretorio nao existe", 33);
         else write(1, "Nao consegue abrir o diretorio", 40);
         printf("\n");
     }
@@ -220,13 +228,13 @@ int lista(char* diretoria){
         while ((dir = readdir(directory)) != NULL) {
             if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0){
                 if(dir->d_type == DT_REG) printf("%s (file)\n", dir->d_name); 
-                else if(dir->d_type == DT_DIR) printf("%s (directory)\n", dir->d_name, dir->d_type); 
-                else if(dir->d_type == DT_BLK) printf("%s (block device)\n", dir->d_name, dir->d_type); 
-                else if(dir->d_type == DT_CHR) printf("%s (character device)\n", dir->d_name, dir->d_type); 
-                else if(dir->d_type == DT_LNK) printf("%s (symbolic link)\n", dir->d_name, dir->d_type); 
-                else if(dir->d_type == DT_SOCK) printf("%s (local-domain socket)\n", dir->d_name, dir->d_type); 
-                else if(dir->d_type == DT_FIFO) printf("%s (fifo)\n", dir->d_name, dir->d_type); 
-                else if(dir->d_type == DT_UNKNOWN) printf("%s (unknown)\n", dir->d_name, dir->d_type);   
+                else if(dir->d_type == DT_DIR) printf("%s (directory)\n", dir->d_name); 
+                else if(dir->d_type == DT_BLK) printf("%s (block device)\n", dir->d_name); 
+                else if(dir->d_type == DT_CHR) printf("%s (character device)\n", dir->d_name); 
+                else if(dir->d_type == DT_LNK) printf("%s (symbolic link)\n", dir->d_name); 
+                else if(dir->d_type == DT_SOCK) printf("%s (local-domain socket)\n", dir->d_name); 
+                else if(dir->d_type == DT_FIFO) printf("%s (fifo)\n", dir->d_name); 
+                else if(dir->d_type == DT_UNKNOWN) printf("%s (unknown)\n", dir->d_name);   
             } 
         }
     }

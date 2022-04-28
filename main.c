@@ -11,6 +11,7 @@ int main(int argc, char *argv[]){
     if(strcmp(argv[1], "ls") == 0) 
         if(argc == 2) lista(".");
         else lista(argv[2]);
+    if(strcmp(argv[1], "stat") == 0) informar(argv[2]);
 
     return 1;
 }
