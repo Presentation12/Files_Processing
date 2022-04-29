@@ -6,6 +6,3 @@ int contar(char* ficheiro);
 int apagar(char* ficheiro);
 int informar(char* ficheiro);
 int lista(char* diretoria);
-
-//Parte 2
-//...
