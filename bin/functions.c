@@ -11,22 +11,17 @@
 #include <pwd.h>
 #include "functions.h"
 
-/*
-    BUGS CONHECIDOS:
-        -> Fazer copy de um ficheiro e tentar concatená-lo (dá erro de permission denied)
-*/
-
 /**
  * @brief Função que escreve no stdout o conteúdo de um ficheiro
  * 
- * TODO: DONE (Make Final Review)
+ * TODO: DONE
  * 
  * @param ficheiro -> ficheiro alvo
  * @return int 
  */
 int mostrar(char* ficheiro){
     int fd = open (ficheiro, O_RDONLY), leitura;
-    char content[1500];
+    char content[50000];
 
     if (fd == -1) 
     {
@@ -48,7 +43,7 @@ int mostrar(char* ficheiro){
 /**
  * @brief Função que copia o conteúdo de um ficheiro para um novo ficheiro
  * 
- * TODO: Por alterar Permissoes
+ * TODO: DONE
  * 
  * @param ficheiro -> ficheiro alvo
  * @return int 
@@ -59,7 +54,7 @@ int copiar(char* ficheiro){
     strcat(ficheiro_copia,".copia"); // adicionar '.copia'
 
     int fd = open (ficheiro, O_RDONLY), leitura;
-    char content[1500];
+    char content[50000];
 
     if (fd == -1) 
     {
@@ -70,7 +65,7 @@ int copiar(char* ficheiro){
     leitura = read(fd, content, sizeof(content));
     
     //Alterar permissoes
-    int fd2 = creat(ficheiro_copia, O_APPEND|O_WRONLY|O_RDONLY|S_IRUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);
+    int fd2 = creat(ficheiro_copia, S_IWUSR|S_IRUSR|S_IWGRP|S_IRGRP|S_IROTH);
 
     write(fd2, content, leitura);
 
@@ -83,7 +78,7 @@ int copiar(char* ficheiro){
 /**
  * @brief Função que concatena o ficheiro 1 no ficheiro 2
  * 
- * TODO: DONE (Make Final Review)
+ * TODO: DONE
  * 
  * @param ficheiro1 -> Ficheiro origem
  * @param ficheiro2 -> Ficheiro destino (concatenado)
@@ -91,7 +86,7 @@ int copiar(char* ficheiro){
  */
 int concatenar(char* ficheiro1, char* ficheiro2){
     int fd = open (ficheiro1, O_RDONLY), leitura;
-    char content[1500];
+    char content[50000];
 
     if (fd == -1) 
     {
@@ -119,7 +114,7 @@ int concatenar(char* ficheiro1, char* ficheiro2){
 /**
  * @brief Função que permite contar e mostrar ao user o número de linhas que um ficheiro contém
  * 
- * TODO: DONE (Make Final Review)
+ * TODO: DONE
  * 
  * @param ficheiro Ficheiro alvo
  * @return int 
@@ -127,7 +122,7 @@ int concatenar(char* ficheiro1, char* ficheiro2){
 int contar(char* ficheiro){
     int counter = 1;
     int fd = open (ficheiro, O_RDONLY), leitura;
-    char content[1500];
+    char content[50000];
 
     if (fd == -1) 
     {
@@ -137,7 +132,7 @@ int contar(char* ficheiro){
 
     leitura = read(fd, content, sizeof(content));
 
-    for(int i = 0; i < sizeof(content); i++){
+    for(int i = 0; i < leitura; i++){
         if (content[i] == '\n') counter++;
     }
 
@@ -149,7 +144,7 @@ int contar(char* ficheiro){
 /**
  * @brief Função com funcionalidade de apagar um ficheiro com o nome passado por parametro
  * 
- * TODO: DONE (Make Final Review)
+ * TODO: DONE
  * 
  * @param ficheiro Ficheiro alvo
  * @return int 
@@ -167,7 +162,7 @@ int apagar(char* ficheiro){
 /**
  * @brief Função com funcionalidade de mostrar a meta-informação do mesmo (simulação comando stat <file>)
  * 
- * TODO: DONE (Make Final Review + Fazer distinção de filetypes com cores)
+ * TODO: DONE
  * 
  * @param ficheiro Ficheiro alvo
  * @return int 
@@ -175,7 +170,7 @@ int apagar(char* ficheiro){
 int informar(char* ficheiro){
  
     int fd = open (ficheiro, O_RDONLY);
-    char content[1500];
+    char content[50000];
 
     if (fd == -1) 
     {
@@ -187,6 +182,11 @@ int informar(char* ficheiro){
 
     if(stat(ficheiro,&info) < 0)    
         return 1;
+
+    if(ficheiro[0] == '.') {
+        printf("Erro ao abrir: No such file or directory\n");
+        return 1;
+    }
 
     struct passwd *user;
     user = getpwuid(info.st_uid);
@@ -232,7 +232,7 @@ int informar(char* ficheiro){
 /**
  * @brief Função com funcionalidade de apresentar uma lista de todas as pastas e ficheiros existentes na diretoria inserida
  * 
- * TODO: DONE (Make Final Review) 
+ * TODO: DONE
  * 
  * @param diretoria Diretoria alvo 
  * @return int 
@@ -249,14 +249,42 @@ int lista(char* diretoria){
     
     if (directory) {
         while ((dir = readdir(directory)) != NULL) {
-            if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0){
-                if(dir->d_type == S_IFBLK) printf("%s (block device)\n", dir->d_name); 
-                else if(dir->d_type == S_IFCHR) printf("%s (character device)\n", dir->d_name); 
-                else if(dir->d_type == S_IFDIR) printf("%s (directory)\n", dir->d_name); 
-                else if(dir->d_type == S_IFIFO) printf("%s (FIFO/pipe)\n", dir->d_name); 
-                else if(dir->d_type == DT_LNK) printf("%s (symlink)\n", dir->d_name); 
-                else if(dir->d_type == S_IFREG) printf("%s (regular file)\n", dir->d_name); 
-                else if(dir->d_type == S_IFSOCK) printf("%s (socket)\n", dir->d_name); 
+            if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0 && dir->d_name[0] != '.'){
+                if(dir->d_type == DT_BLK){
+                    printf("\033[0;33m");
+                    printf("%s (block device)\n", dir->d_name); 
+                    printf("\033[0m");
+                } 
+                else if(dir->d_type == DT_CHR){
+                    printf("\033[40m");
+                    printf("%s (character device)\n", dir->d_name);
+                    printf("\033[0m");
+                }  
+                else if(dir->d_type == DT_DIR){
+                    printf("\033[0;34m");
+                    printf("%s (directory)\n", dir->d_name);
+                    printf("\033[0m");
+                }  
+                else if(dir->d_type == DT_FIFO){
+                    printf("\033[0;31m");
+                    printf("%s (FIFO/pipe)\n", dir->d_name); 
+                    printf("\033[0m");
+                } 
+                else if(dir->d_type == DT_LNK){
+                    printf("\033[0;32m");
+                    printf("%s (symlink)\n", dir->d_name);
+                    printf("\033[0m");
+                } 
+                else if(dir->d_type == DT_REG){
+                    printf("\033[0;37m");
+                    printf("%s (regular file)\n", dir->d_name); 
+                    printf("\033[0m");
+                }
+                else if(dir->d_type == DT_SOCK){
+                    printf("\033[0;35m");
+                    printf("%s (socket)\n", dir->d_name); 
+                    printf("\033[0m");
+                } 
                 else printf("%s (unknown)\n", dir->d_name);   
             } 
         }

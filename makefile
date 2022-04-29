@@ -1,2 +1,2 @@
-compile:
-	gcc main.c functions.c functions.h -o e
+execute:
+	gcc -o e bin/main.c bin/functions.c bin/functions.h -w
