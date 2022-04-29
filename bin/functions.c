@@ -252,44 +252,45 @@ int lista(char* diretoria){
             if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0 && dir->d_name[0] != '.'){
                 if(dir->d_type == DT_BLK){
                     printf("\033[0;33m");
-                    printf("%s (block device)\n", dir->d_name); 
+                    printf("%s (block device)  ", dir->d_name); 
                     printf("\033[0m");
                 } 
                 else if(dir->d_type == DT_CHR){
                     printf("\033[40m");
-                    printf("%s (character device)\n", dir->d_name);
+                    printf("%s (character device)  ", dir->d_name);
                     printf("\033[0m");
                 }  
                 else if(dir->d_type == DT_DIR){
                     printf("\033[0;34m");
-                    printf("%s (directory)\n", dir->d_name);
+                    printf("%s (directory)  ", dir->d_name);
                     printf("\033[0m");
                 }  
                 else if(dir->d_type == DT_FIFO){
                     printf("\033[0;31m");
-                    printf("%s (FIFO/pipe)\n", dir->d_name); 
+                    printf("%s (FIFO/pipe)  ", dir->d_name); 
                     printf("\033[0m");
                 } 
                 else if(dir->d_type == DT_LNK){
                     printf("\033[0;32m");
-                    printf("%s (symlink)\n", dir->d_name);
+                    printf("%s (symlink)  ", dir->d_name);
                     printf("\033[0m");
                 } 
                 else if(dir->d_type == DT_REG){
                     printf("\033[0;37m");
-                    printf("%s (regular file)\n", dir->d_name); 
+                    printf("%s (regular file)  ", dir->d_name); 
                     printf("\033[0m");
                 }
                 else if(dir->d_type == DT_SOCK){
                     printf("\033[0;35m");
-                    printf("%s (socket)\n", dir->d_name); 
+                    printf("%s (socket)  ", dir->d_name); 
                     printf("\033[0m");
                 } 
-                else printf("%s (unknown)\n", dir->d_name);   
+                else printf("%s (unknown)  ", dir->d_name);   
             } 
         }
     }
 
+    printf("\n");
     closedir(directory);
 
     return 1;
