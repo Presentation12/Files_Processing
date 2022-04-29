@@ -220,7 +220,7 @@ int informar(char* ficheiro){
             break;
     }
 
-    printf("File inode: %d\tUid: (%d/%s)\n",info.st_ino, info.st_uid,user->pw_name);
+    printf("Inode: %d\tUid: (%d/%s)\n",info.st_ino, info.st_uid,user->pw_name);
     printf("Access: %s", ctime(&info.st_atim));
     printf("Modify: %s", ctime(&info.st_mtim));
     printf("Change: %s", ctime(&info.st_ctim));
