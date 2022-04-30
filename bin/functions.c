@@ -64,7 +64,6 @@ int copiar(char* ficheiro){
 
     leitura = read(fd, content, sizeof(content));
     
-    //Alterar permissoes
     int fd2 = creat(ficheiro_copia, S_IWUSR|S_IRUSR|S_IWGRP|S_IRGRP|S_IROTH);
 
     write(fd2, content, leitura);
