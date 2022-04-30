@@ -6,6 +6,7 @@
         "pwd.h": "c",
         "stat.h": "c",
         "types.h": "c",
-        "dirent.h": "c"
+        "dirent.h": "c",
+        "stdio.h": "c"
     }
 }

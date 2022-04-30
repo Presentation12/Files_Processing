@@ -242,7 +242,7 @@ int lista(char* diretoria){
     struct dirent *dir;
 
     if(directory == NULL){
-        if(errno == ENOENT) write(1, "Diretorio nao existe", 25);
+        if(errno == ENOENT) write(1, "Diretorio nao existe", 20);
         else write(1, "Nao consegue abrir o diretorio", 40);
         printf("\n");
     }
