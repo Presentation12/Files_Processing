@@ -132,7 +132,7 @@ int contar(char* ficheiro){
     leitura = read(fd, content, sizeof(content));
 
     for(int i = 0; i < leitura; i++){
-        if (content[i] == '\n') counter++;
+        if (content[i] == '\n' && content[i+1] != '\0') counter++;
     }
 
     printf("O ficheiro %s contem %d linhas\n", ficheiro, counter);
