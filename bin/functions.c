@@ -137,6 +137,8 @@ int contar(char* ficheiro){
 
     printf("O ficheiro %s contem %d linhas\n", ficheiro, counter);
 
+    close(fd);
+
     return 1;
 }
 
@@ -225,6 +227,8 @@ int informar(char* ficheiro){
     printf("Change: %s", ctime(&info.st_ctim));
     printf("\n");
  
+    close(fd);
+
     return 1;
 }
 
