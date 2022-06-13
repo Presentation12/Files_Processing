@@ -1,0 +1,5 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/l0ud3r/Code/Files_Processing'
+gcc -o e bin/main.c bin/functions.c bin/functions.h -w
+make: Leaving directory '/home/l0ud3r/Code/Files_Processing'
+ 
